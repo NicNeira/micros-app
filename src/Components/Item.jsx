@@ -2,7 +2,8 @@ import React from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { Image } from 'expo-image'
 
-export const Item = ({ title, id, onPressFunction }) => {
+export const Item = ({ id, name, onPressFunction }) => {
+  console.log('id', id, 'name', name)
   return (
     <Pressable onPress={() => onPressFunction(id)}>
       <View style={styles.container2}>
@@ -11,7 +12,7 @@ export const Item = ({ title, id, onPressFunction }) => {
           source={require('../../assets/micro.svg')}
           contentFit='contain'
         />
-        <Text style={styles.title}>{id} {title} </Text>
+        <Text style={styles.title}>{id} {name} </Text>
         {/* {console.log('ewe')} */}
         {/* !TODO: Revisar por que al momento de escribir en el text area se renderiza nuevamente este componente */}
       </View>

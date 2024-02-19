@@ -1,16 +1,42 @@
-import React from 'react'
-import { StatusBar, StyleSheet, Text, View } from 'react-native'
+import React, { useState } from 'react'
+import { Pressable, StatusBar, StyleSheet, Text, View } from 'react-native'
 import { Image } from 'expo-image'
+import { AntDesign } from '@expo/vector-icons'
 
-export const BusStop = ({ data }) => {
+export const BusStop = ({ data, favoritos, setFavoritos }) => {
+  const [isFavorito, setIsFavorito] = useState(favoritos.some(fav => fav.paradero === data.paradero))
+  console.log('isFavorito', isFavorito)
   // Console log para ver el contenido de data
-  console.log(JSON.stringify(data))
+  // console.log(JSON.stringify(data))
+
+  // Función para Agregar a Favoritos
+  const toggleFavorito = (data) => {
+    const nuevoEstado = !isFavorito
+    setIsFavorito(nuevoEstado)
+
+    setFavoritos((currentFavoritos) => {
+      if (nuevoEstado) {
+        // Agregar a favoritos
+        return [...currentFavoritos, data]
+      } else {
+        // Remover de favoritos
+        return currentFavoritos.filter(fav => fav.paradero !== data.paradero)
+      }
+    })
+  }
 
   return (
     data && (
       <>
         <View style={styles.center}>
           <Text style={styles.title}>{data.nomett}</Text>
+          <Pressable onPress={() => toggleFavorito(data)}>
+            {isFavorito
+              ? (
+                <AntDesign name='heart' size={24} color='black' style={styles.heart} />)
+              : (
+                <AntDesign name='hearto' size={24} color='black' style={styles.heart} />)}
+          </Pressable>
         </View>
         {data.servicios?.item?.map((item, index) => (
 
@@ -72,7 +98,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   center: {
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  heart: {
+    marginLeft: 10
   }
 })

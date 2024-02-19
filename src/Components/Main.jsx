@@ -1,27 +1,75 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Modal, SafeAreaView, StatusBar, StyleSheet, View } from 'react-native'
 import { BusStop } from './BusStop'
 import { useBusStopData } from '../hooks/useBusStopData'
 import { FavoriteBusStops } from './FavoriteBusStops'
 import { SearchBusStop } from './SearchBusStop'
+import { MapsStops } from './MapsStops'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export const Main = () => {
   const [modalVisible, setModalVisible] = useState(false)
+  // Estado para Paraderos Favoritos
+  const [favoritos, setFavoritos] = useState([])
 
   // Custom hook que obtiene los datos de la API
   const { data, obtenerDatos } = useBusStopData()
 
   // Funcion que se ejecuta al presionar un item de la lista o al presionar el boton de consultar
   const onPressFunction = (id) => {
-    console.log('Presionado', id)
+    // console.log('Presionado', id)
     obtenerDatos(id)
     data && setModalVisible(true)
   }
 
+  // funciones para guardar y cargar favoritos
+  const guardarFavoritos = async (favoritos) => {
+    try {
+      const jsonValue = JSON.stringify(favoritos)
+      await AsyncStorage.setItem('@favoritos', jsonValue)
+    } catch (e) {
+      // guardar error
+    }
+  }
+
+  const cargarFavoritos = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('@favoritos')
+      return jsonValue != null ? JSON.parse(jsonValue) : []
+    } catch (e) {
+      // cargar error
+      return []
+    }
+  }
+
+  // Uso de Favoritos
+  useEffect(() => {
+    cargarFavoritos().then(setFavoritos)
+  }, [])
+
+  useEffect(() => {
+    guardarFavoritos(favoritos)
+  }, [favoritos])
+
+  // const borrarDatoPorClave = async () => {
+  //   try {
+  //     await AsyncStorage.clear()
+  //     console.log('Todo el almacenamiento local ha sido limpiado.')
+  //   } catch (e) {
+  //     console.error('Error al limpiar el AsyncStorage:', e)
+  //   }
+  // }
+
+  // // Uso de Favoritos
+  // useEffect(() => {
+  //   borrarDatoPorClave()
+  // }, [])
+
   return (
     <>
       <SafeAreaView style={styles.container}>
-        <FavoriteBusStops onPressFunction={onPressFunction} />
+        <MapsStops setModalVisible={setModalVisible} onPressFunction={onPressFunction} />
+        <FavoriteBusStops onPressFunction={onPressFunction} setFavoritos={setFavoritos} favoritos={favoritos} />
         <SearchBusStop onPressFunction={onPressFunction} />
         <Modal
           animationType='slide'
@@ -32,7 +80,7 @@ export const Main = () => {
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              <BusStop data={data} />
+              <BusStop data={data} favoritos={favoritos} setFavoritos={setFavoritos} />
             </View>
           </View>
         </Modal>
@@ -44,8 +92,7 @@ export const Main = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    marginTop: StatusBar.currentHeight || 0
+    flex: 1
   },
   centeredView: {
     flex: 1,
@@ -63,5 +110,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5
+  },
+  map: {
+    width: '100%',
+    height: '100%'
   }
 })
