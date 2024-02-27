@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 export const useBusStopData = () => {
-  const [data, setData] = useState([])
+  const [data, setData] = useState(null)
 
   const obtenerDatos = async (busStop) => {
     try {
@@ -37,5 +37,9 @@ export const useBusStopData = () => {
     }
   }
 
-  return { data, obtenerDatos }
+  const dataReset = () => {
+    setData(null)
+  }
+
+  return { data, obtenerDatos, dataReset }
 }

@@ -12,8 +12,10 @@ export const Main = () => {
   // Estado para Paraderos Favoritos
   const [favoritos, setFavoritos] = useState([])
 
+  // console.log('favoritos', favoritos)
+
   // Custom hook que obtiene los datos de la API
-  const { data, obtenerDatos } = useBusStopData()
+  const { data, obtenerDatos, dataReset } = useBusStopData()
 
   // Funcion que se ejecuta al presionar un item de la lista o al presionar el boton de consultar
   const onPressFunction = (id) => {
@@ -67,33 +69,29 @@ export const Main = () => {
 
   return (
     <>
-      <SafeAreaView style={styles.container}>
-        <MapsStops setModalVisible={setModalVisible} onPressFunction={onPressFunction} />
-        <FavoriteBusStops onPressFunction={onPressFunction} setFavoritos={setFavoritos} favoritos={favoritos} />
-        <SearchBusStop onPressFunction={onPressFunction} />
-        <Modal
-          animationType='slide'
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(!modalVisible)
-          }}
-        >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <BusStop data={data} favoritos={favoritos} setFavoritos={setFavoritos} />
-            </View>
+      <MapsStops setModalVisible={setModalVisible} onPressFunction={onPressFunction} />
+      <FavoriteBusStops onPressFunction={onPressFunction} setFavoritos={setFavoritos} favoritos={favoritos} />
+      <SearchBusStop onPressFunction={onPressFunction} />
+      <Modal
+        animationType='slide'
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible)
+          dataReset()
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <BusStop data={data} favoritos={favoritos} setFavoritos={setFavoritos} />
           </View>
-        </Modal>
-      </SafeAreaView>
+        </View>
+      </Modal>
       <StatusBar style='auto' />
     </>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
   centeredView: {
     flex: 1,
     margin: 22

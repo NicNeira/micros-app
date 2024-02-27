@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react'
 // Paraderos Info
 import StopData from '../utils/AllStopData.json'
 import MapView, { Marker } from 'react-native-maps'
-import { StyleSheet, View } from 'react-native'
+import { ActivityIndicator, StyleSheet, View } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export const MapsStops = ({ setModalVisible, onPressFunction }) => {
+  const [loading, setLoading] = useState(true)
+
   // funciones para guardar y cargar favoritos
   const guardarCordenadas = async (favoritos) => {
     try {
@@ -26,9 +28,11 @@ export const MapsStops = ({ setModalVisible, onPressFunction }) => {
     }
   }
 
-  // Uso de Favoritos
   useEffect(() => {
-    cargarCordenadas().then(setRegion)
+    cargarCordenadas().then((data) => {
+      setRegion(data)
+      setLoading(false) // Esto oculta el loader una vez que los datos están cargados
+    })
   }, [])
 
   // Estado inicial para la región del mapa centrado en un punto específico con un nivel de zoom definido.
@@ -66,11 +70,15 @@ export const MapsStops = ({ setModalVisible, onPressFunction }) => {
   }
 
   useEffect(() => {
-    guardarCordenadas(region)
+    // Asegúrate de establecer loading en false después de actualizar la región y los paraderos visibles
+    guardarCordenadas(region).then(() => setLoading(false))
   }, [region])
 
   return (
     <View style={styles.container}>
+      {loading && (
+        <ActivityIndicator size='large' color='#0000ff' style={styles.loaderStyle} />
+      )}
       <MapView
         style={styles.map}
         initialRegion={region} // Establece la región inicial del mapa usando el estado de la región.
@@ -96,5 +104,14 @@ const styles = StyleSheet.create({
   map: {
     width: '100%',
     height: '100%'
+  },
+  loaderStyle: {
+    position: 'absolute', // Esto coloca el loader sobre el mapa
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 })
