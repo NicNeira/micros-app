@@ -1,0 +1,41 @@
+export default {
+  expo: {
+    name: 'micros-app',
+    slug: 'micros-app',
+    version: '1.0.0',
+    orientation: 'portrait',
+    icon: './assets/icon.png',
+    userInterfaceStyle: 'light',
+    splash: {
+      image: './assets/splash.png',
+      resizeMode: 'contain',
+      backgroundColor: '#ffffff'
+    },
+    assetBundlePatterns: [
+      '**/*'
+    ],
+    ios: {
+      supportsTablet: true
+    },
+    android: {
+      adaptiveIcon: {
+        foregroundImage: './assets/adaptive-icon.png',
+        backgroundColor: '#ffffff'
+      },
+      package: 'com.pipita.microsapp',
+      config: {
+        googleMaps: {
+          apiKey: process.env.GOOGLE_MAPS_API_KEY
+        }
+      }
+    },
+    web: {
+      favicon: './assets/favicon.png'
+    },
+    extra: {
+      eas: {
+        projectId: '15939516-c263-47c2-bb7c-ca5c979db61e'
+      }
+    }
+  }
+}

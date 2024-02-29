@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Modal, SafeAreaView, StatusBar, StyleSheet, View } from 'react-native'
+import { Modal, StatusBar, StyleSheet, View } from 'react-native'
 import { BusStop } from './BusStop'
 import { useBusStopData } from '../hooks/useBusStopData'
 import { FavoriteBusStops } from './FavoriteBusStops'
